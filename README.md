@@ -655,17 +655,10 @@ erDiagram
 ### Cache Structure Design
 ```mermaid
 graph TD
-    subgraph Redis Cache Layers
-        L1[Session Cache]
-        L2[Auction Data Cache]
-        L3[User Preferences Cache]
-        L4[API Response Cache]
-    end
-    
-    L1 --- K1[user:session:{id}]
-    L2 --- K2[auction:live:{id}]
-    L3 --- K3[user:prefs:{id}]
-    L4 --- K4[api:response:{path}]
+    L1[Session Cache] --> K1("user:session:{id}")
+    L2[Auction Data Cache] --> K2("auction:live:{id}")
+    L3[User Preferences Cache] --> K3("user:prefs:{id}")
+    L4[API Response Cache] --> K4("api:response:{path}")
 ```
 
 ## Network Architecture
