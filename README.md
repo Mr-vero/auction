@@ -662,17 +662,10 @@ graph TD
         L4[API Response Cache]
     end
     
-    subgraph Cache Keys
-        K1[user:session:{id}]
-        K2[auction:live:{id}]
-        K3[user:prefs:{id}]
-        K4[api:response:{path}]
-    end
-    
-    L1 --> K1
-    L2 --> K2
-    L3 --> K3
-    L4 --> K4
+    L1 --- K1[user:session:{id}]
+    L2 --- K2[auction:live:{id}]
+    L3 --- K3[user:prefs:{id}]
+    L4 --- K4[api:response:{path}]
 ```
 
 ## Network Architecture
@@ -690,38 +683,42 @@ graph TB
         WAF[Web Application Firewall]
     end
     
-    subgraph Application Layer
+    subgraph Application_Layer
         API[API Servers]
         WS[WebSocket Servers]
     end
     
-    subgraph Service Layer
+    subgraph Service_Layer
         AS[Auth Service]
         US[User Service]
         PS[Product Service]
         AUS[Auction Service]
     end
     
-    subgraph Data Layer
+    subgraph Data_Layer
         PG[(PostgreSQL)]
         RD[(Redis)]
         ES[(Elasticsearch)]
     end
     
     CLI --> CDN
-    CDN --> WAF
+    CDN --> WA
     WAF --> LB
     LB --> API
     LB --> WS
-    API --> Service Layer
-    WS --> Service Layer
-    Service Layer --> Data Layer
+    API --> AS
+    API --> US
+    API --> PS
+    API --> AUS
+    WS --> AS
+    
+    Service_Layer --> Data_Layer
 ```
 
 ### Network Security Zones
 ```mermaid
 graph TB
-    subgraph Public Zone
+    subgraph Public_Zone
         CLI[Clients]
         CDN[CDN]
     end
@@ -732,19 +729,22 @@ graph TB
         BH[Bastion Host]
     end
     
-    subgraph Private Zone
+    subgraph Private_Zone
         APP[Application Servers]
         SERV[Service Layer]
     end
     
-    subgraph Restricted Zone
+    subgraph Restricted_Zone
         DB[Databases]
         VAULT[Secret Vault]
     end
     
-    Public Zone --> DMZ
-    DMZ --> Private Zone
-    Private Zone --> Restricted Zone
+    CLI --> WAF
+    CDN --> WAF
+    WAF --> LB
+    LB --> APP
+    APP --> DB
+    APP --> VAULT
 ```
 
 ## CI/CD Pipeline Flow
